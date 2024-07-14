@@ -26,6 +26,7 @@ import UIKit
 }
 
 
+
 protocol RatingViewDelegate: AnyObject {
     func didChangedRating(_ newValue: Int)
 }
