@@ -75,7 +75,6 @@ public class RFRatingView: UIView {
     }
     
     
-    
     //MARK: -> Init UI
     override init(frame: CGRect) {
         super.init(frame: frame)
