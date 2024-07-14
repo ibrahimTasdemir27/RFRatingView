@@ -42,15 +42,31 @@ public class RFRatingView: UIView {
     
     
     //MARK: -> Env
-    @IBInspectable public var countOfRating: Int = 5
     @IBInspectable public var unselectedButtonTintColor: UIColor = UIColor.gray
     @IBInspectable public var selectedButtonTintColor: UIColor = UIColor.systemYellow
-    public var buttonImageType: RatingViewImageInstance = .star
     public var buttonLists: [UIButton] = []
+    
+    public var buttonImageType: RatingViewImageInstance = .star {
+        didSet {
+            refreshLayout()
+        }
+    }
+    
+    @IBInspectable public var countOfRating: Int = 5 {
+        didSet {
+            guard countOfRating > 0 else {
+                countOfRating = oldValue
+                return
+            }
+            
+            refreshLayout()
+        }
+    }
+    
     
     public var currentRating: Float = 0 {
         didSet {
-            guard currentRating >= 0 && currentRating <= 5 else {
+            guard currentRating >= 0 && currentRating <= Float(countOfRating) else {
                 currentRating = oldValue
                 return
             }
@@ -71,8 +87,15 @@ public class RFRatingView: UIView {
         setupViews()
     }
     
+    private func refreshLayout() {
+        subviews.forEach { child in
+            child.subviews.forEach({ $0.removeFromSuperview() })
+            child.removeFromSuperview()
+        }
+        
+        setupViews()
+    }
     
-
     private func createButtonInstance() -> UIButton {
         let button = UIButton()
         button.tintColor = unselectedButtonTintColor
@@ -85,30 +108,53 @@ public class RFRatingView: UIView {
         guard Thread.isMainThread else {
             return
         }
+        
+        buttonLists.removeAll()
+        
         translatesAutoresizingMaskIntoConstraints = false
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
         backgroundView.axis = .horizontal
         backgroundView.spacing = 2
-        backgroundView.alignment = .fill
+        backgroundView.alignment = .center
         
         rootContentView.translatesAutoresizingMaskIntoConstraints = false
         rootContentView.axis = .horizontal
         rootContentView.spacing = 2
-        rootContentView.alignment = .fill
+        rootContentView.alignment = .center
+        
+        let improvedWidth = (self.frame.width - CGFloat(countOfRating * 2)) / CGFloat(countOfRating)
         
         
         for i in 0..<countOfRating {
             let backgroundButton = createButtonInstance()
+            backgroundButton.translatesAutoresizingMaskIntoConstraints = false
             backgroundView.addArrangedSubview(backgroundButton)
+            
+            
             let button = createButtonInstance()
+            button.translatesAutoresizingMaskIntoConstraints = false
             button.addTarget(self, action: #selector(didChangeSelectedRating(_:)), for: .touchUpInside)
             button.tag = i
             rootContentView.addArrangedSubview(button)
             buttonLists.append(button)
+            
+            
+            NSLayoutConstraint.activate([
+                backgroundButton.heightAnchor.constraint(equalToConstant: improvedWidth),
+                button.heightAnchor.constraint(equalToConstant: improvedWidth)
+            ])
+            
+            if (i != countOfRating - 1) {
+                NSLayoutConstraint.activate([
+                    backgroundButton.widthAnchor.constraint(equalToConstant: improvedWidth),
+                    button.widthAnchor.constraint(equalToConstant: improvedWidth),
+                ])
+            }
         }
         
         self.addSubview(backgroundView)
         self.addSubview(rootContentView)
+        
         NSLayoutConstraint.activate([
             backgroundView.leadingAnchor.constraint(equalTo: leadingAnchor),
             backgroundView.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -120,6 +166,8 @@ public class RFRatingView: UIView {
             rootContentView.topAnchor.constraint(equalTo: topAnchor),
             rootContentView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+        
+        
     }
 }
 
@@ -160,7 +208,10 @@ extension RFRatingView {
             let index = Int(ratingValue - floatingPoint)
             
             didChangeSelectedRating(buttonLists[index])
-            setRateFloatingButton(floatingPoint, with: buttonLists[index])
+            DispatchQueue.main.async { [self] in
+                setRateFloatingButton(floatingPoint, with: buttonLists[index])
+            }
+            
         }
     }
     
@@ -172,7 +223,7 @@ extension RFRatingView {
             width: CGFloat(rate) * button.frame.size.width,
             height: button.frame.size.height
         )
-        maskLayer.backgroundColor = unselectedButtonTintColor.cgColor
+        maskLayer.backgroundColor = selectedButtonTintColor.cgColor
         button.layer.mask = maskLayer
     }
 }
