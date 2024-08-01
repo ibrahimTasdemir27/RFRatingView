@@ -2,7 +2,11 @@
 A simple ratings view written in Swift. Integer or Float.
 [![Build Status](https://github.com/ytdl-org/youtube-dl/workflows/CI/badge.svg)](https://github.com/ytdl-org/youtube-dl/actions?query=workflow%3ACI)
 ![Static Badge](https://img.shields.io/badge/iOS-swift-xcode?logo=swift&link=https%3A%2F%2Fgithub.com%2FibrahimTasdemir27%2FRFRatingView)
-![Static Badge](https://img.shields.io/badge/-0B66C2?logo=linkedin&link=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fibrahim-halil-ta%C5%9Fdemir-ios-developer-111631245)
+<a href='https://www.linkedin.com/in/ibrahim-halil-taşdemir-ios-developer-111631245/' target="_blank"><img alt='linkedin' src='https://img.shields.io/badge/-100000?style=flat&logo=linkedin&logoColor=FFFFFF&labelColor=0B66C2&color=0B66C2'/></a>
+
+<img alt="Static Badge" src="https://img.shields.io/badge/-0B66C2?logo=linkedin&link=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fibrahim-halil-ta%C5%9Fdemir-ios-developer-111631245">
+<a href='https%3A%2F%2Fwww.linkedin.com%2Fin%2Fibrahim-halil-ta%C5%9Fdemir-ios-developer-111631245/' target="_blank"><img alt="Static Badge" src="https://img.shields.io/badge/-0B66C2?logo=linkedin">
+
 
 
 
