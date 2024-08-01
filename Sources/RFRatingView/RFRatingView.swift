@@ -25,12 +25,13 @@ import UIKit
     }
 }
 
-protocol RatingViewDelegate: AnyObject {
-    func didChangedRating(_ newValue: Int)
-}
 
 @IBDesignable
 public class RFRatingView: UIView {
+    
+    protocol Delegate: AnyObject {
+        func didChangedRating(_ newValue: Int)
+    }
     
     //MARK: -> View
     private let rootContentView = UIStackView()
@@ -38,10 +39,12 @@ public class RFRatingView: UIView {
     
     
     //MARK: -> Delegate
-    var delegate: RatingViewDelegate?
+    var delegate: Delegate?
     
     
-    //MARK: -> Env
+    
+    
+    // MARK: -> Env
     @IBInspectable public var unselectedButtonTintColor: UIColor = UIColor.gray
     @IBInspectable public var selectedButtonTintColor: UIColor = UIColor.systemYellow
     public var buttonLists: [UIButton] = []
@@ -88,12 +91,14 @@ public class RFRatingView: UIView {
     }
     
     private func refreshLayout() {
-        subviews.forEach { child in
-            child.subviews.forEach({ $0.removeFromSuperview() })
-            child.removeFromSuperview()
+        DispatchQueue.main.async { [self] in
+            subviews.forEach { child in
+                child.subviews.forEach({ $0.removeFromSuperview() })
+                child.removeFromSuperview()
+            }
+            
+            setupViews()
         }
-        
-        setupViews()
     }
     
     private func createButtonInstance() -> UIButton {
@@ -123,6 +128,7 @@ public class RFRatingView: UIView {
         rootContentView.alignment = .center
         
         let improvedWidth = (self.frame.width - CGFloat(countOfRating * 2)) / CGFloat(countOfRating)
+        let improvedHeight = improvedWidth > self.frame.height ? self.frame.height : improvedWidth
         
         
         for i in 0..<countOfRating {
@@ -131,23 +137,23 @@ public class RFRatingView: UIView {
             backgroundView.addArrangedSubview(backgroundButton)
             
             
-            let button = createButtonInstance()
-            button.translatesAutoresizingMaskIntoConstraints = false
-            button.addTarget(self, action: #selector(didChangeSelectedRating(_:)), for: .touchUpInside)
-            button.tag = i
-            rootContentView.addArrangedSubview(button)
-            buttonLists.append(button)
+            let foregroundButton = createButtonInstance()
+            foregroundButton.translatesAutoresizingMaskIntoConstraints = false
+            foregroundButton.addTarget(self, action: #selector(didChangeSelectedRating(_:)), for: .touchUpInside)
+            foregroundButton.tag = i
+            rootContentView.addArrangedSubview(foregroundButton)
+            buttonLists.append(foregroundButton)
             
             
             NSLayoutConstraint.activate([
-                backgroundButton.heightAnchor.constraint(equalToConstant: improvedWidth),
-                button.heightAnchor.constraint(equalToConstant: improvedWidth)
+                backgroundButton.heightAnchor.constraint(equalToConstant: improvedHeight),
+                foregroundButton.heightAnchor.constraint(equalToConstant: improvedHeight)
             ])
             
             if (i != countOfRating - 1) {
                 NSLayoutConstraint.activate([
                     backgroundButton.widthAnchor.constraint(equalToConstant: improvedWidth),
-                    button.widthAnchor.constraint(equalToConstant: improvedWidth),
+                    foregroundButton.widthAnchor.constraint(equalToConstant: improvedWidth),
                 ])
             }
         }
