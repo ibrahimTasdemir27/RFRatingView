@@ -47,7 +47,7 @@ To integrate RFRatingView into your Xcode project using Swift Package Manager, a
 
 ```
 dependencies: [
-    .package(url: "https://github.com/SnapKit/SnapKit.git", .upToNextMajor(from: "5.0.1"))
+    .package(url: "https://github.com/ibrahimTasdemir27/RFRatingView", .upToNextMajor(from: "2.0.0"))
 ]
 ```
 
